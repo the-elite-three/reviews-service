@@ -1,17 +1,19 @@
 const fs = require('fs');
 
-const writeStream = fs.createWriteStream('test.csv');
+const tempHeaders = ['id', 'review_id', 'url'];
 
-const headers = ['id', 'review_id', 'url'].join();
-writeStream.write(`${headers}\n`);
-const tempData = [];
-for (let i = 0; i < 10; i += 1) {
-  tempData.push(i);
-}
-writeStream.write(tempData.join());
+const generateFile = (headers) => {
+  const writeStream = fs.createWriteStream('test.csv');
+  writeStream.write(`${headers.join()}\n`);
+  const tempData = [];
+  for (let i = 0; i < 10; i += 1) {
+    tempData.push(i);
+  }
+  writeStream.write(tempData.join());
+  writeStream.on('finish', () => {
+    console.log('done');
+  });
+  writeStream.end();
+};
 
-writeStream.on('finish', () => {
-  console.log('done');
-});
-
-writeStream.end();
+generateFile(tempHeaders);
