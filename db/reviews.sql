@@ -12,13 +12,6 @@ CREATE TABLE characteristics (
     char_name varchar(50)
 );
 
-CREATE TABLE characteristics_review (
-    id serial PRIMARY KEY,
-    characteristic_id integer,
-    review_id integer,
-    review_value integer
-);
-
 CREATE TABLE review (
     id serial PRIMARY KEY,
     product_id integer,
@@ -34,12 +27,20 @@ CREATE TABLE review (
     helpfulness int
 );
 
+CREATE TABLE characteristics_review (
+    id serial PRIMARY KEY,
+    characteristic_id integer REFERENCES characteristics,
+    review_id integer REFERENCES review,
+    review_value integer
+);
+
 CREATE TABLE reviews_photos (
   id serial PRIMARY KEY,
-  review_id integer,
+  review_id integer REFERENCES review,
   photo_url varchar(2000)
 );
 
--- \copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/db/characteristics.csv' DELIMITER ',' CSV HEADER;
--- \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/db/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
+\copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/db/characteristics.csv' DELIMITER ',' CSV HEADER;
 \copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/db/reviews.csv' DELIMITER ',' CSV HEADER;
+\copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/db/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
+\copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/db/reviews_photos.csv' DELIMITER ',' CSV HEADER;
