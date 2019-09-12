@@ -1,3 +1,4 @@
 node_modules
 db/*.csv
+*.csv
 .DS_Store
