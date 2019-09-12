@@ -40,6 +40,8 @@ CREATE TABLE reviews_photos (
   photo_url varchar(2000)
 );
 
+CREATE INDEX ON review (rating);
+
 \copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/db/characteristics.csv' DELIMITER ',' CSV HEADER;
 \copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/db/reviews.csv' DELIMITER ',' CSV HEADER;
 \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/db/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
