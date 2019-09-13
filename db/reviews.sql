@@ -42,7 +42,7 @@ CREATE TABLE reviews_photos (
 
 CREATE INDEX ON review (rating);
 
-\copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/db/characteristics.csv' DELIMITER ',' CSV HEADER;
-\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/db/reviews.csv' DELIMITER ',' CSV HEADER;
-\copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/db/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
-\copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/db/reviews_photos.csv' DELIMITER ',' CSV HEADER;
+\copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/characteristics.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews.csv' DELIMITER ',' CSV HEADER;
+\copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
+\copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/reviews_photos.csv' DELIMITER ',' CSV HEADER;
