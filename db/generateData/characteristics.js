@@ -1,3 +1,3 @@
 const getFile = require('./generatedata');
 
-getFile.generateCharReview();
+getFile.generateCharacteristics();

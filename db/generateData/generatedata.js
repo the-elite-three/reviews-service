@@ -74,21 +74,22 @@ const generateFile = (config) => {
     writeStream.write(fileBuffer);
     fileBuffer = '';
   }
-  writeStream.on('finish', () => {}); // placeholder?
+  writeStream.on('finish', () => {
+    console.log(`wrote ${fileName}`);
+  });
   writeStream.end();
-  console.log(`wrote ${fileName}`);
   return true;
 };
 
 // Generate files based on config
 const generateRevPhotos = () => generateFile(fileConfig.reviews_photos);
 const generateCharacteristics = () => generateFile(fileConfig.characteristics);
-const generateCharReview = () => generateFile(fileConfig.characteristic_reviews);
+const generateCharReviews = () => generateFile(fileConfig.characteristic_reviews);
 const generateReviews = () => generateFile(fileConfig.reviews);
 
 module.exports = {
   generateRevPhotos,
   generateCharacteristics,
-  generateCharReview,
+  generateCharReviews,
   generateReviews,
 };
