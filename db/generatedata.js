@@ -2,20 +2,33 @@ const fs = require('fs');
 const faker = require('faker');
 
 const tempConfig = {
-  headers: ['id', 'review_id', 'url'],
-  getFakeData: () => faker.fake('{{random.number}},{{image.imageUrl}}'),
+  reviews_photos: {
+    headers: ['id', 'review_id', 'url'],
+    fileName: 'reviews_photos.csv',
+    getFakeData: (id) => `${id},${faker.fake('{{random.number}},{{image.imageUrl}}')}`,
+  },
+  characteristics: {
+    headers: ['id', 'product_id', 'name'],
+    fileName: 'characteristics.csv',
+    getFakeData: (id) => `${id},${faker.fake('{{random.number}},{{commerce.productAdjective}}')}`,
+  },
+  characteristic_reviews: {
+    headers: ['id', 'characteristic_id', 'review_id', 'value'],
+    fileName: 'characteristic_reviews.csv',
+    getFakeData: () => faker.fake('{{random.number}},{{commerce.productAdjective}}'),
+  },
 };
 
 const generateFile = (config) => {
-  const { headers, getFakeData } = config;
-  const writeStream = fs.createWriteStream('test.csv');
+  const { headers, getFakeData, fileName } = config;
+  const writeStream = fs.createWriteStream(fileName);
   writeStream.write(`${headers.join()}\n`);
   let counter = 0;
-  for (let i = 0; i < 100000; i += 1) {
+  for (let i = 0; i < 100; i += 1) {
     let fileBuffer = '';
-    for (let j = 0; j < 100; j += 1) {
+    for (let j = 0; j < 10; j += 1) {
       counter += 1;
-      fileBuffer += `${counter},${getFakeData()}\n`;
+      fileBuffer += `${getFakeData(counter)}\n`;
     }
     writeStream.write(fileBuffer);
   }
@@ -25,4 +38,5 @@ const generateFile = (config) => {
   writeStream.end();
 };
 
-generateFile(tempConfig);
+generateFile(tempConfig.reviews_photos);
+generateFile(tempConfig.characteristics);
