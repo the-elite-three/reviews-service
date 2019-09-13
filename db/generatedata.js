@@ -1,6 +1,8 @@
 const fs = require('fs');
 const faker = require('faker');
 
+const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+
 const tempConfig = {
   reviews_photos: {
     headers: ['id', 'review_id', 'url'],
@@ -15,7 +17,7 @@ const tempConfig = {
   characteristic_reviews: {
     headers: ['id', 'characteristic_id', 'review_id', 'value'],
     fileName: 'characteristic_reviews.csv',
-    getFakeData: () => faker.fake('{{random.number}},{{commerce.productAdjective}}'),
+    getFakeData: (id) => `${id},${getRandomInt(10000000)},${getRandomInt(10000000)},${getRandomInt(5)}`,
   },
 };
 
@@ -40,3 +42,4 @@ const generateFile = (config) => {
 
 generateFile(tempConfig.reviews_photos);
 generateFile(tempConfig.characteristics);
+generateFile(tempConfig.characteristic_reviews);
