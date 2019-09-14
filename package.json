@@ -4,7 +4,7 @@
   "description": "reviews service api",
   "main": "index.js",
   "scripts": {
-    "start-dev": "nodemon index.js",
+    "start-dev": "nodemon server/index.js",
     "db-build": "psql postgres -f db/schema.sql",
     "test": "test",
     "lint": "eslint --ext .js --ext .jsx . --fix"
@@ -39,6 +39,8 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "faker": "^4.1.0",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "morgan": "^1.9.1",
+    "pg": "^7.12.1"
   }
 }
