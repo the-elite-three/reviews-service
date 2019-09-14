@@ -3,9 +3,9 @@ const faker = require('faker');
 
 // Constants
 const MIN_RECS = 1;
-const MAX_RECS = 100000;
-const MAX_WRITES = 10000;
-const MAX_LINES_PER_WRITE = 1000;
+const MAX_RECS = 10000000;
+const MAX_WRITES = 200;
+const MAX_LINES_PER_WRITE = 50000;
 const MIN_RATING = 0;
 const MAX_RATING = 5;
 const MIN_COUNT = 0;
