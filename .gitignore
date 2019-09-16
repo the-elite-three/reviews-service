@@ -1,4 +1,5 @@
 node_modules
 db/*.csv
+db/pool.js
 *.csv
 .DS_Store

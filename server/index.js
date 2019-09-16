@@ -13,6 +13,8 @@ app.get('/', (request, response) => {
   response.json({ info: 'Totally working' });
 });
 
+app.use('/reviews', require('./routes'));
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });
