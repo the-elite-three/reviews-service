@@ -1,5 +1,7 @@
 const { pool } = require('./pool');
 
+const queryStrings = '';
+
 // Get reviews from database
 const getReviews = (req, res) => {
   const { productid } = req.params;
