@@ -1,5 +1,5 @@
 const { pool } = require('./pool');
-const { formatReview } = require('../server/formatData');
+const { formatReview, formatReviewMeta } = require('../server/formatData');
 
 const query = {
   selectReviews: (productid) => (
@@ -10,6 +10,14 @@ const query = {
         FROM review, reviews_photos
         WHERE review.product_id = $1
         AND review.id = reviews_photos.review_id`,
+      values: [productid],
+    }
+  ),
+  selectReviewsMeta: (productid) => (
+    {
+      text: `SELECT review.rating, review.recommend
+        FROM review
+        WHERE review.product_id = $1`,
       values: [productid],
     }
   ),
@@ -30,10 +38,13 @@ const getReviews = (req, res) => {
 // Get review meta data from database
 const getReviewMeta = (req, res) => {
   const { productid } = req.params;
-  pool.query(`SELECT * FROM review WHERE product_id = ${productid}`, (err, results) => {
-    if (err) res.status(500).json(err);
-    res.status(200).json(results.rows);
-  });
+  pool.query(query.selectReviewsMeta(productid))
+    .then((results) => formatReviewMeta(productid, results.rows))
+    .then((formated) => res.status(200).json(formated))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 };
 
 // Add review to database

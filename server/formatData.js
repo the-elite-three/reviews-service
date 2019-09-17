@@ -37,7 +37,7 @@ const defaultCharacteristic = {
 };
 
 const formatReview = (productid, rows) => {
-  const reviewIds = [];
+  const reviewIds = []; // Track ids already in the object
   const results = [];
 
   rows.forEach((row) => {
@@ -79,6 +79,14 @@ const formatReview = (productid, rows) => {
   );
 };
 
+const formatReviewMeta = (productid, rows) => {
+  return rows;
+  // sum count of ratings
+  // sum count of recommended
+  // build object of characteristics
+};
+
 module.exports = {
   formatReview,
+  formatReviewMeta,
 };
