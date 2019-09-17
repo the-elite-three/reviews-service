@@ -37,13 +37,13 @@ const defaultCharacteristic = {
 };
 
 const formatReview = (productid, rows) => {
-  const formatted = { productid, results: [] };
   const reviewIds = [];
+  const results = [];
 
   rows.forEach((row) => {
     if (!reviewIds.includes(row.review_id)) {
       reviewIds.push(row.review_id);
-      formatted.results.push({
+      results.push({
         review_id: row.review_id,
         rating: row.rating,
         summary: row.summary,
@@ -58,7 +58,7 @@ const formatReview = (productid, rows) => {
     }
 
     if (row.photo_url !== null) {
-      formatted.results.forEach((result) => {
+      results.forEach((result) => {
         if (result.review_id === row.review_id) {
           result.photos.push({
             id: row.photo_id,
@@ -69,7 +69,14 @@ const formatReview = (productid, rows) => {
     }
   });
 
-  return formatted;
+  return (
+    {
+      productid,
+      page: 0,
+      count: results.length,
+      results,
+    }
+  );
 };
 
 module.exports = {
