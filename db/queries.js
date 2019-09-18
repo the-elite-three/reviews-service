@@ -21,6 +21,13 @@ const query = {
       values: [productid],
     }
   ),
+  updateReviewHelpful: (reviewId) => (
+    {
+      text: `UPDATE review SET helpfulness = helpfulness+1
+        WHERE review.id = $1`,
+      values: [reviewId],
+    }
+  ),
 };
 
 // Get reviews from database
@@ -54,7 +61,13 @@ const addReview = (req, res) => {
 
 // Update review helpful in database
 const updateReviewHelpful = (req, res) => {
-  res.end();
+  const { reviewid } = req.params;
+  pool.query(query.updateReviewHelpful(reviewid))
+    .then((results) => res.status(200).json(results))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 };
 
 // Report review in database

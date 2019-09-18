@@ -21,7 +21,7 @@ router.get('/:productid/meta', db.getReviewMeta);
 router.post('/:productid', db.addReview);
 
 // Put routes
-router.put('/helpful/:review_id', db.updateReviewHelpful);
-router.put('/report/:review_id', db.reportReview);
+router.put('/helpful/:reviewid', db.updateReviewHelpful);
+router.put('/report/:reviewid', db.reportReview);
 
 module.exports = router;
