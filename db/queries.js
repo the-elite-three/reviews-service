@@ -24,7 +24,8 @@ const query = {
   updateReviewHelpful: (reviewId) => (
     {
       text: `UPDATE review SET helpfulness = helpfulness+1
-        WHERE review.id = $1`,
+        WHERE review.id = $1
+        RETURNING helpfulness`,
       values: [reviewId],
     }
   ),
@@ -63,7 +64,7 @@ const addReview = (req, res) => {
 const updateReviewHelpful = (req, res) => {
   const { reviewid } = req.params;
   pool.query(query.updateReviewHelpful(reviewid))
-    .then((results) => res.status(200).json(results))
+    .then((results) => res.status(200).json(results.rows))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
