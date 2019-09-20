@@ -21,12 +21,20 @@ const query = {
       values: [productid],
     }
   ),
-  insertReview: (productid) => (
+  insertReview: (productid, reviewData = [2, 'summary', 'body', 'mah_name', 'mah_fake_email@email.com']) => (
     {
       text: `INSERT INTO review (product_id, rating, summary, body, reviewer_name, reviewer_email)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id`,
-      values: [productid, 2, 'summary', 'body', 'mah_name', 'mah_fake_email@email.com'],
+      values: [productid, ...reviewData],
+    }
+  ),
+  insertPhotos: (reviewId = 3, photoURLs = ['one', 'two', 'three']) => (
+    {
+      text: `INSERT INTO reviews_photos (review_id, photo_url)
+        VALUES ($1, unnest(array['one', 'two', 'three']))
+        RETURNING id`,
+      values: [reviewId],
     }
   ),
   updateReviewHelpful: (reviewId) => (
@@ -74,7 +82,7 @@ const getReviewMeta = (req, res) => {
 // Add review to database
 const addReview = (req, res) => {
   const { productid } = req.params;
-  pool.query(query.insertReview(productid))
+  pool.query(query.insertPhotos(productid))
     .then((results) => res.status(200).json(results.rows))
     .catch((err) => {
       console.log(err);
