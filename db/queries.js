@@ -21,11 +21,27 @@ const query = {
       values: [productid],
     }
   ),
+  insertReview: (productid) => (
+    {
+      text: `INSERT INTO review (product_id, rating, summary, body, reviewer_name, reviewer_email)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
+      values: [productid, 2, 'summary', 'body', 'mah_name', 'mah_fake_email@email.com'],
+    }
+  ),
   updateReviewHelpful: (reviewId) => (
     {
       text: `UPDATE review SET helpfulness = helpfulness+1
         WHERE review.id = $1
         RETURNING helpfulness`,
+      values: [reviewId],
+    }
+  ),
+  updateReviewReported: (reviewId) => (
+    {
+      text: `UPDATE review SET reported = true
+        WHERE review.id = $1
+        RETURNING reported`,
       values: [reviewId],
     }
   ),
@@ -57,7 +73,13 @@ const getReviewMeta = (req, res) => {
 
 // Add review to database
 const addReview = (req, res) => {
-  res.end();
+  const { productid } = req.params;
+  pool.query(query.insertReview(productid))
+    .then((results) => res.status(200).json(results.rows))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 };
 
 // Update review helpful in database
@@ -73,7 +95,13 @@ const updateReviewHelpful = (req, res) => {
 
 // Report review in database
 const reportReview = (req, res) => {
-  res.end();
+  const { reviewid } = req.params;
+  pool.query(query.updateReviewReported(reviewid))
+    .then((results) => res.status(200).json(results.rows))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 };
 
 module.exports = {

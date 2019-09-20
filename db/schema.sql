@@ -16,7 +16,7 @@ CREATE TABLE review (
     id serial PRIMARY KEY,
     product_id integer,
     rating integer,
-    rating_date date,
+    rating_date date DEFAULT CURRENT_DATE,
     summary varchar(250),
     body varchar(1000),
     recommend boolean,
@@ -24,7 +24,7 @@ CREATE TABLE review (
     reviewer_name varchar(60),
     reviewer_email varchar(60),
     response varchar(1000),
-    helpfulness int
+    helpfulness int DEFAULT 0
 );
 
 CREATE TABLE characteristics_review (
@@ -46,3 +46,6 @@ CREATE INDEX ON review (rating);
 \copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews.csv' DELIMITER ',' CSV HEADER;
 \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
 \copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/reviews_photos.csv' DELIMITER ',' CSV HEADER;
+
+-- Set sequence for review id
+SELECT setval(pg_get_serial_sequence('review', 'id'), max(id)) FROM review;
