@@ -3,3 +3,4 @@ db/*.csv
 db/pool.js
 *.csv
 .DS_Store
+newrelic.js
