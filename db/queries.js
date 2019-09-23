@@ -30,7 +30,7 @@ const query = {
       values: [productid],
     }
   ),
-  insertReview: (productid, reviewData = [2, 'summary', 'body', 'mah_name', 'mah_fake_email@email.com']) => (
+  insertReview: (productid, reviewData) => (
     {
       text: `INSERT INTO review (product_id, rating, summary, body, reviewer_name, reviewer_email)
         VALUES ($1, $2, $3, $4, $5, $6)
@@ -103,8 +103,8 @@ const getReviewMeta = (req, res) => {
 // Add review to database - add photos and characteristics if applicable
 const addReview = (req, res) => {
   const { productid } = req.params;
-  const { photoURLs = ['test'] } = req.query;
-  const { characteristics = { 14: 5, 16: 2 } } = req.query;
+  const { photoURLs } = req.query;
+  const { characteristics } = req.query;
   let reviewId = 0; // initial value for review id
 
   pool.query(query.insertReview(productid)) // insert reviews
