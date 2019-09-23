@@ -20,9 +20,9 @@ const query = {
   ),
   selectReviewsMeta: (productid) => (
     {
-      text: `SELECT review.rating, review.recommend
-        FROM review
-        WHERE review.product_id = $1`,
+      text: `SELECT r.rating, r.recommend
+        FROM review r
+        WHERE r.product_id = $1`,
       values: [productid],
     }
   ),
