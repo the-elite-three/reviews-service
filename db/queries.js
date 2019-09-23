@@ -1,6 +1,11 @@
 const { pool } = require('./pool');
 const { formatReview, formatReviewMeta } = require('../server/formatData');
 
+// Build array params (ex: 3 elements returns $2, $3, $4)
+const buildArrayParams = (arr, startVal = 2) => arr.map(((value, index) => `$${index + startVal}`)).join();
+const buildValues = (id, nestedArr) => nestedArr.map((value) => [id].concat(...value));
+
+// Build Queries
 const query = {
   selectReviews: (productid) => (
     {
@@ -29,14 +34,30 @@ const query = {
       values: [productid, ...reviewData],
     }
   ),
-  insertPhotos: (reviewId = 3, photoURLs = ['one', 'two', 'three']) => (
-    {
-      text: `INSERT INTO reviews_photos (review_id, photo_url)
-        VALUES ($1, unnest(array['one', 'two', 'three']))
-        RETURNING id`,
-      values: [reviewId],
-    }
-  ),
+  insertPhotos: (reviewId, photoURLs) => {
+    const arrayParams = buildArrayParams(photoURLs);
+    return (
+      {
+        text: `INSERT INTO reviews_photos (review_id, photo_url)
+          VALUES ($1, unnest(array[${arrayParams}]))
+          RETURNING id`,
+        values: [reviewId, ...photoURLs],
+      }
+    );
+  },
+  insertCharacteristicReview: (reviewId, characteristics) => {
+    const flatCharacteristics = buildValues(reviewId, Object.entries(characteristics))
+      .map((value) => `(${value.join()})`)
+      .join();
+    return (
+      {
+        text: `INSERT INTO characteristics_review (review_id, characteristic_id, review_value)
+          VALUES ${flatCharacteristics}
+          RETURNING id`,
+        values: [],
+      }
+    );
+  },
   updateReviewHelpful: (reviewId) => (
     {
       text: `UPDATE review SET helpfulness = helpfulness+1
@@ -82,7 +103,24 @@ const getReviewMeta = (req, res) => {
 // Add review to database
 const addReview = (req, res) => {
   const { productid } = req.params;
-  pool.query(query.insertPhotos(productid))
+  const { photoURLs = ['test'] } = req.query;
+  const { characteristics = { 14: 5, 16: 2 } } = req.query;
+  let reviewId = 0; // initial value for review id
+
+  pool.query(query.insertReview(productid))
+    .then((results) => {
+      reviewId = results.rows[0].id;
+      if (photoURLs.length > 0) { // if there are any photos
+        return pool.query(query.insertPhotos(reviewId, photoURLs));
+      }
+      return results;
+    })
+    .then((results) => {
+      if (Object.keys(characteristics).length > 0 && reviewId > 0) { // if characteristics exist
+        return pool.query(query.insertCharacteristicReview(reviewId, characteristics));
+      }
+      return results;
+    })
     .then((results) => res.status(200).json(results.rows))
     .catch((err) => {
       console.log(err);

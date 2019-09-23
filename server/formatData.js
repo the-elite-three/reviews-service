@@ -24,12 +24,12 @@ const defaultPhoto = {
 };
 
 
-const defaultReviewMeta = {
-  product_id: 0,
-  ratings: {},
-  recommended: {},
-  characteristics: {},
-};
+// const defaultReviewMeta = {
+//   product_id: 0,
+//   ratings: {},
+//   recommended: {},
+//   characteristics: {},
+// };
 
 const defaultCharacteristic = {
   id: 0,
@@ -80,10 +80,29 @@ const formatReview = (productid, rows) => {
 };
 
 const formatReviewMeta = (productid, rows) => {
-  return rows;
-  // sum count of ratings
-  // sum count of recommended
-  // build object of characteristics
+  const defaultReviewMeta = {
+    product_id: productid,
+    ratings: {},
+    recommended: { 0: 0, 1: 0 },
+    characteristics: {},
+  };
+  console.log(rows);
+  const metaReducer = (acc, currentVal) => {
+    // Update rating count
+    if (Object.prototype.hasOwnProperty.call(acc.ratings, [currentVal.rating])) {
+      acc.ratings[currentVal.rating] += 1; // increment exisitng count
+    } else {
+      acc.ratings[currentVal.rating] = 1; // set count
+    }
+    // Update recommended count
+    if (currentVal.recommend === true) {
+      acc.recommended[0] += 1; // increment 'yes' recommended
+    } else {
+      acc.recommended[1] += 1; // incremement 'no' recommended
+    }
+    return acc;
+  };
+  return rows.reduce(metaReducer, defaultReviewMeta);
 };
 
 module.exports = {

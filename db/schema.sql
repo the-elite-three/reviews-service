@@ -47,5 +47,8 @@ CREATE INDEX ON review (rating);
 \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
 \copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/reviews_photos.csv' DELIMITER ',' CSV HEADER;
 
--- Set sequence for review id
+-- Set sequence for review id, reviews_photos id
 SELECT setval(pg_get_serial_sequence('review', 'id'), max(id)) FROM review;
+SELECT setval(pg_get_serial_sequence('reviews_photos', 'id'), max(id)) FROM reviews_photos;
+SELECT setval(pg_get_serial_sequence('characteristics_review', 'id'), max(id)) FROM characteristics_review;
+
