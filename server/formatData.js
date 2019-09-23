@@ -1,33 +1,7 @@
-const defaultReviewList = {
-  product: 0,
-  page: 0,
-  count: 0,
-  results: [{}],
-};
+// Helper reduce function for sum
+const sumReducer = (acc, currentVal) => acc + currentVal;
 
-const defaultReview = {
-  review_id: 0,
-  rating: 0,
-  summary: '',
-  recommend: 0,
-  response: '',
-  body: '',
-  date: '',
-  reviewer_name: '',
-  helpfulness: 0,
-  photos: [{}],
-};
-
-const defaultPhoto = {
-  id: 0,
-  url: '',
-};
-
-const defaultCharacteristic = {
-  id: 0,
-  value: 0,
-};
-
+// Format Review for GET request
 const formatReview = (productid, rows) => {
   const reviewIds = []; // Track ids already in the object
   const results = [];
@@ -71,20 +45,24 @@ const formatReview = (productid, rows) => {
   );
 };
 
+// Format Review Meta for GET request
 const formatReviewMeta = (productid, rows) => {
   const reviewIds = []; // Track ids already in the return object
+
+  // Default object to return for Review Meta
   const defaultReviewMeta = {
     product_id: productid,
     ratings: {},
     recommended: { 0: 0, 1: 0 },
     characteristics: {},
   };
-  console.log(rows);
+
+  // Reducer to transform rows into inital object to be returned to client
   const metaReducer = (acc, currentVal) => {
-    if (!reviewIds.includes(currentVal.review_id)) { // if review_id not already in array
-      reviewIds.push(currentVal.review_id); // push id
+    if (!reviewIds.includes(currentVal.id)) { // if review_id not already in array
+      reviewIds.push(currentVal.id); // push id
       // Update rating count
-      if (Object.prototype.hasOwnProperty.call(acc.ratings, [currentVal.rating])) {
+      if (Object.prototype.hasOwnProperty.call(acc.ratings, currentVal.rating)) {
         acc.ratings[currentVal.rating] += 1; // increment exisitng count
       } else {
         acc.ratings[currentVal.rating] = 1; // set count
@@ -96,9 +74,33 @@ const formatReviewMeta = (productid, rows) => {
         acc.recommended[1] += 1; // incremement 'no' recommended
       }
     }
+
+    // Update Characteristics
+    if (currentVal.char_name !== null) { // if there is a characteristc name associated with row
+      if (!Object.prototype.hasOwnProperty.call(acc.characteristics, currentVal.char_name)) {
+        acc.characteristics[currentVal.char_name] = {
+          id: currentVal.characteristic_id,
+          value: [currentVal.review_value],
+        };
+      } else {
+        acc.characteristics[currentVal.char_name].value.push(currentVal.review_value);
+      }
+    }
     return acc;
   };
-  return rows.reduce(metaReducer, defaultReviewMeta);
+
+  // Invoke reducer on returned rows
+  const meta = rows.reduce(metaReducer, defaultReviewMeta);
+
+  // Get average of characteristics on reduced meta
+  const characteristics = Object.keys(meta.characteristics);
+  characteristics.forEach((charName) => {
+    meta.characteristics[charName].value = meta.characteristics[charName].value
+      .reduce(sumReducer, 0) / meta.characteristics[charName].value.length;
+  });
+
+  // return final form
+  return meta;
 };
 
 module.exports = {

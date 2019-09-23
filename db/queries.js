@@ -20,8 +20,10 @@ const query = {
   ),
   selectReviewsMeta: (productid) => (
     {
-      text: `SELECT r.id, r.product_id, r.rating, r.recommend, cr.review_value
-        FROM review r LEFT OUTER JOIN characteristics_review cr ON (r.id = cr.review_id)
+      text: `SELECT r.id, r.product_id, r.rating, r.recommend, cr.characteristic_id, cr.review_value, c.char_name
+        FROM review r
+        LEFT OUTER JOIN characteristics_review cr ON (r.id = cr.review_id)
+        LEFT OUTER JOIN characteristics c ON (c.id = cr.characteristic_id)
         WHERE r.product_id = $1
         ORDER BY r.id`,
       values: [productid],
@@ -124,7 +126,6 @@ const addReview = (req, res) => {
     })
     .then((results) => res.status(200).json(results.rows))
     .catch((err) => {
-      console.log(err);
       res.status(500).json(err);
     });
 };
