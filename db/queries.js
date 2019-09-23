@@ -3,6 +3,7 @@ const { formatReview, formatReviewMeta } = require('../server/formatData');
 
 // Build array params (ex: 3 elements returns $2, $3, $4)
 const buildArrayParams = (arr, startVal = 2) => arr.map(((value, index) => `$${index + startVal}`)).join();
+// Build values to be inserted into query from nested array with id attached as first element
 const buildValues = (id, nestedArr) => nestedArr.map((value) => [id].concat(...value));
 
 // Build Queries
@@ -79,16 +80,15 @@ const query = {
   ),
 };
 
+// Issue Queries
+
 // Get reviews from database
 const getReviews = (req, res) => {
   const { productid } = req.params;
   pool.query(query.selectReviews(productid))
     .then((results) => formatReview(productid, results.rows))
     .then((formated) => res.status(200).json(formated))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+    .catch((err) => res.status(500).json(err));
 };
 
 // Get review meta data from database
@@ -97,37 +97,34 @@ const getReviewMeta = (req, res) => {
   pool.query(query.selectReviewsMeta(productid))
     .then((results) => formatReviewMeta(productid, results.rows))
     .then((formated) => res.status(200).json(formated))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+    .catch((err) => res.status(500).json(err));
 };
 
-// Add review to database
+// Add review to database - add photos and characteristics if applicable
 const addReview = (req, res) => {
   const { productid } = req.params;
   const { photoURLs = ['test'] } = req.query;
   const { characteristics = { 14: 5, 16: 2 } } = req.query;
   let reviewId = 0; // initial value for review id
 
-  pool.query(query.insertReview(productid))
+  pool.query(query.insertReview(productid)) // insert reviews
     .then((results) => {
-      reviewId = results.rows[0].id;
-      if (photoURLs.length > 0) { // if there are any photos
+      reviewId = results.rows[0].id; // set review id
+      // if there are photos and review id is valid
+      if (photoURLs.length > 0 && reviewId > 0) {
         return pool.query(query.insertPhotos(reviewId, photoURLs));
       }
       return results;
     })
     .then((results) => {
-      if (Object.keys(characteristics).length > 0 && reviewId > 0) { // if characteristics exist
+      // if characteristics exist and review id is valid
+      if (Object.keys(characteristics).length > 0 && reviewId > 0) {
         return pool.query(query.insertCharacteristicReview(reviewId, characteristics));
       }
       return results;
     })
     .then((results) => res.status(200).json(results.rows))
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+    .catch((err) => res.status(500).json(err));
 };
 
 // Update review helpful in database
@@ -135,10 +132,7 @@ const updateReviewHelpful = (req, res) => {
   const { reviewid } = req.params;
   pool.query(query.updateReviewHelpful(reviewid))
     .then((results) => res.status(200).json(results.rows))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+    .catch((err) => res.status(500).json(err));
 };
 
 // Report review in database
@@ -146,10 +140,7 @@ const reportReview = (req, res) => {
   const { reviewid } = req.params;
   pool.query(query.updateReviewReported(reviewid))
     .then((results) => res.status(200).json(results.rows))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+    .catch((err) => res.status(500).json(err));
 };
 
 module.exports = {
