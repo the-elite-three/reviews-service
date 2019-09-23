@@ -1,5 +1,5 @@
 const { pool } = require('./pool');
-const { formatReview, formatReviewMeta } = require('../server/formatData');
+const { formatReview, formatReviewMeta } = require('../server/controller');
 
 // Build array params (ex: 3 elements returns $2, $3, $4)
 const buildArrayParams = (arr, startVal = 2) => arr.map(((value, index) => `$${index + startVal}`)).join();
