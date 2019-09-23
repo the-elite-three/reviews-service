@@ -6,6 +6,7 @@ const formatReview = (productid, rows) => {
   const reviewIds = []; // Track ids already in the object
   const results = [];
 
+  // Get unique reviews to return as result
   rows.forEach((row) => {
     if (!reviewIds.includes(row.review_id)) {
       reviewIds.push(row.review_id);
@@ -23,6 +24,7 @@ const formatReview = (productid, rows) => {
       });
     }
 
+    // Get unique photo urls for each review
     if (row.photo_url !== null) {
       results.forEach((result) => {
         if (result.review_id === row.review_id) {
