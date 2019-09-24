@@ -4,3 +4,4 @@ db/pool.js
 *.csv
 .DS_Store
 newrelic.js
+newrelic_agent.log

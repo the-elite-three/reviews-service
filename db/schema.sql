@@ -40,8 +40,6 @@ CREATE TABLE reviews_photos (
   photo_url varchar(2000)
 );
 
-CREATE INDEX ON review (rating);
-
 \copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/characteristics.csv' DELIMITER ',' CSV HEADER;
 \copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews.csv' DELIMITER ',' CSV HEADER;
 \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
@@ -52,3 +50,9 @@ SELECT setval(pg_get_serial_sequence('review', 'id'), max(id)) FROM review;
 SELECT setval(pg_get_serial_sequence('reviews_photos', 'id'), max(id)) FROM reviews_photos;
 SELECT setval(pg_get_serial_sequence('characteristics_review', 'id'), max(id)) FROM characteristics_review;
 SELECT setval(pg_get_serial_sequence('characteristics', 'id'), max(id)) FROM characteristics;
+
+CREATE INDEX ON review (rating);
+CREATE INDEX ON review (product_id);
+CREATE INDEX ON reviews_photos (review_id);
+CREATE INDEX ON characteristics_review (review_id);
+CREATE INDEX ON characteristics_review (characteristic_id);
