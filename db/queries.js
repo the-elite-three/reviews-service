@@ -12,7 +12,7 @@ const query = {
     {
       text:
       `SELECT review.id as review_id, review.rating, review.rating_date as date, review.summary, review.body,
-      review.recommend, review.reviewer_name, review.helpfulness, reviews_photos.id as photo_id, reviews_photos.photo_url
+      review.recommend, review.response, review.reviewer_name, review.helpfulness, reviews_photos.id as photo_id, reviews_photos.photo_url
         FROM review, reviews_photos
         WHERE review.product_id = $1
         AND review.id = reviews_photos.review_id`,

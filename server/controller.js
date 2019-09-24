@@ -76,7 +76,6 @@ const formatReviewMeta = (productid, rows) => {
         acc.recommended[1] += 1; // incremement 'no' recommended
       }
     }
-
     // Update Characteristics
     if (currentVal.char_name !== null) { // if there is a characteristc name associated with row
       if (!Object.prototype.hasOwnProperty.call(acc.characteristics, currentVal.char_name)) {
