@@ -30,14 +30,19 @@ const query = {
       values: [productid],
     }
   ),
-  insertReview: (productid, reviewData) => (
-    {
-      text: `INSERT INTO review (product_id, rating, summary, body, reviewer_name, reviewer_email)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id`,
-      values: [productid, ...reviewData],
-    }
-  ),
+  insertReview: (productid, reviewData = []) => {
+    const {
+      rating, summary, body, name, email,
+    } = reviewData;
+    return (
+      {
+        text: `INSERT INTO review (product_id, rating, summary, body, reviewer_name, reviewer_email)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING id`,
+        values: [productid, rating, summary, body, name, email],
+      }
+    );
+  },
   insertPhotos: (reviewId, photoURLs) => {
     const arrayParams = buildArrayParams(photoURLs);
     return (
@@ -103,16 +108,14 @@ const getReviewMeta = (req, res) => {
 // Add review to database - add photos and characteristics if applicable
 const addReview = (req, res) => {
   const { productid } = req.params;
-  const { photoURLs } = req.query;
-  const { characteristics } = req.query;
+  const { photos, characteristics, ...formData } = req.body;
   let reviewId = 0; // initial value for review id
-
-  pool.query(query.insertReview(productid)) // insert reviews
+  pool.query(query.insertReview(productid, formData)) // insert reviews
     .then((results) => {
       reviewId = results.rows[0].id; // set review id
       // if there are photos and review id is valid
-      if (photoURLs.length > 0 && reviewId > 0) {
-        return pool.query(query.insertPhotos(reviewId, photoURLs));
+      if (photos.length > 0 && reviewId > 0) {
+        return pool.query(query.insertPhotos(reviewId, formData));
       }
       return results;
     })
