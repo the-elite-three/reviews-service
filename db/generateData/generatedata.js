@@ -4,8 +4,11 @@ const faker = require('faker');
 // Constants
 const MIN_RECS = 1;
 const MAX_RECS = 10000000;
-const MAX_WRITES = 200;
-const MAX_LINES_PER_WRITE = 50000;
+const MAX_WRITES = 10;
+const MAX_LINES_PER_WRITE = 100000;
+const FILE_COUNT = 10;
+// const MAX_WRITES = 200;
+// const MAX_LINES_PER_WRITE = 50000;
 const MIN_RATING = 0;
 const MAX_RATING = 5;
 const MIN_COUNT = 0;
@@ -39,22 +42,22 @@ const getRandomResponse = () => faker.fake('{{company.catchPhrase}}');
 const fileConfig = {
   reviews_photos: {
     headers: ['id', 'review_id', 'url'],
-    fileName: 'reviews_photos.csv',
+    fileName: 'reviews_photos',
     getFakeData: (id) => `${id},${getRandomMaxRecInt()},${getRandomImgURL()}`,
   },
   characteristics: {
     headers: ['id', 'product_id', 'name'],
-    fileName: 'characteristics.csv',
+    fileName: 'characteristics',
     getFakeData: (id) => `${id},${getRandomMaxRecInt()},${getRandomDescriptor()}`,
   },
   characteristic_reviews: {
     headers: ['id', 'characteristic_id', 'review_id', 'value'],
-    fileName: 'characteristic_reviews.csv',
+    fileName: 'characteristic_reviews',
     getFakeData: (id) => `${id},${getRandomMaxRecInt()},${getRandomMaxRecInt()},${getRandomRating()}`,
   },
   reviews: {
     headers: ['id', 'product_id', 'rating', 'date', 'summary', 'body', 'recommend', 'reported', 'reviewer_name', 'reviewer_email', 'response', 'helpfulness'],
-    fileName: 'reviews.csv',
+    fileName: 'reviews',
     getFakeData: (id) => `${id},${getRandomMaxRecInt()},${getRandomRating()},${getRandomDate()},${getRandomSentence()},${getRandomParagraph()},${getRandomBool()},${getRandomBool()},${getRandomUserName()},${getRandomEmail()},${getRandomResponse()},${getRandomCount()}`,
   },
 };
@@ -62,22 +65,25 @@ const fileConfig = {
 // File Generation
 const generateFile = (config) => {
   const { headers, getFakeData, fileName } = config;
-  const writeStream = fs.createWriteStream(fileName);
-  writeStream.write(`${headers.join()}\n`);
+  const fileType = 'csv';
   let counter = 0;
-  let fileBuffer = '';
-  for (let i = 0; i < MAX_WRITES; i += 1) {
-    for (let j = 0; j < MAX_LINES_PER_WRITE; j += 1) {
-      counter += 1;
-      fileBuffer += `${getFakeData(counter)}\n`;
+  for (let fileNumber = 1; fileNumber <= FILE_COUNT; fileNumber += 1) {
+    const writeStream = fs.createWriteStream(`${fileName}${fileNumber}.${fileType}`);
+    writeStream.write(`${headers.join()}\n`);
+    let fileBuffer = '';
+    for (let i = 0; i < MAX_WRITES; i += 1) {
+      for (let j = 0; j < MAX_LINES_PER_WRITE; j += 1) {
+        counter += 1;
+        fileBuffer += `${getFakeData(counter)}\n`;
+      }
+      writeStream.write(fileBuffer);
+      fileBuffer = '';
     }
-    writeStream.write(fileBuffer);
-    fileBuffer = '';
+    writeStream.on('finish', () => {
+      console.log(`wrote ${fileName}`);
+    });
+    writeStream.end();
   }
-  writeStream.on('finish', () => {
-    console.log(`wrote ${fileName}`);
-  });
-  writeStream.end();
   return true;
 };
 
