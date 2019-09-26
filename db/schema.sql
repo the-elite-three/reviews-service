@@ -41,7 +41,11 @@ CREATE TABLE reviews_photos (
 );
 
 \copy characteristics(id, product_id, char_name) FROM '~/code/reviews-service/characteristics.csv' DELIMITER ',' CSV HEADER;
-\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews1.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews2.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews3.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews4.csv' DELIMITER ',' CSV HEADER;
+\copy review(id, product_id, rating, rating_date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM '~/code/reviews-service/reviews5.csv' DELIMITER ',' CSV HEADER;
 \copy characteristics_review(id, characteristic_id, review_id, review_value) FROM '~/code/reviews-service/characteristic_reviews.csv' DELIMITER ',' CSV HEADER;
 \copy reviews_photos(id, review_id, photo_url) FROM '~/code/reviews-service/reviews_photos.csv' DELIMITER ',' CSV HEADER;
 
